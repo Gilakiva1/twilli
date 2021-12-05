@@ -15,27 +15,35 @@ export const App = () => {
     const [calls, setCalls] = useState(null)
 
     useEffect(async () => {
-        if (!calls) {
-            const currCalls = await callService.getCalls()
+        
+        const currCalls = await callService.getCalls()
 
-            currCalls.sort((a, b) => {
-                const currADate = new Date(a.date)
-                const currBDate = new Date(b.date)
-                console.log('currADate',currADate,'currBDate',currBDate);
-                if (currADate > currBDate)return -1
-                else if (currADate < currBDate) return 1
-            })
-            setCalls(currCalls)
-        }
+        currCalls.sort((a, b) => {
+            const currADate = new Date(a.date)
+            const currBDate = new Date(b.date)
+            console.log('currADate',currADate,'currBDate',currBDate);
+            if (currADate > currBDate)return -1
+            else if (currADate < currBDate) return 1
+        })
+        setCalls(currCalls)
+        
 
     }, [])
-    const ToggleHistory = () => {
+    const ToggleHistory = async () => {
         setIsHistoryCall(!isHistoryCall)
-        console.log(isHistoryCall);
+        const currCalls = await callService.getCalls()
+
+        currCalls.sort((a, b) => {
+            const currADate = new Date(a.date)
+            const currBDate = new Date(b.date)
+            console.log('currADate',currADate,'currBDate',currBDate);
+            if (currADate > currBDate)return -1
+            else if (currADate < currBDate) return 1
+        })
+        setCalls(currCalls)
     }
     const OnHistoryCall = (phone) => {
         setToCall(phone)
-
     }
 
     const handleChange = () => {
@@ -56,12 +64,9 @@ export const App = () => {
         <div>
             <AppHeader ToggleHistory={ToggleHistory} />
             <main>
-                {isHistoryCall &&
-
-                    <HistoryCalls calls={calls} OnHistoryCall={OnHistoryCall} />
-                }
+                
                 <div>
-                    <label htmlFor='phone'>phone</label>
+                    <label htmlFor='phone'>phone:</label>
                     <input
                         id='phone'
                         type='phone'
@@ -70,9 +75,13 @@ export const App = () => {
                         name='phone'
                         value={toCall}
                         onChange={handleChange}
-                    />
+                        />
                     <button onClick={() => { addToHistory(toCall) }}>Call</button>
                 </div>
+                        {isHistoryCall &&
+        
+                            <HistoryCalls calls={calls} OnHistoryCall={OnHistoryCall} />
+                        }
 
             </main>
         </div>
