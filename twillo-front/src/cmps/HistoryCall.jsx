@@ -6,6 +6,7 @@ export const HistoryCalls = ({ calls, OnHistoryCall }) => {
     useEffect(() => {
         if (calls) {
             const currCalls = calls.splice(0, 5)
+            console.log('calls',currCalls);
             setCalls(currCalls)
         }
     }, [])

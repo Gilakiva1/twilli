@@ -9,58 +9,53 @@ import './assets/style.scss';
 
 export const App = () => {
 
-
     const [isHistoryCall, setIsHistoryCall] = useState(false)
     const [toCall, setToCall] = useState('')
     const [calls, setCalls] = useState(null)
 
     useEffect(async () => {
-        
         const currCalls = await callService.getCalls()
-
-        currCalls.sort((a, b) => {
-            const currADate = new Date(a.date)
-            const currBDate = new Date(b.date)
-            console.log('currADate',currADate,'currBDate',currBDate);
-            if (currADate > currBDate)return -1
-            else if (currADate < currBDate) return 1
-        })
-        setCalls(currCalls)
-        
-
+       
+        setCalls(sortCalls(currCalls))
     }, [])
+
     const ToggleHistory = async () => {
         setIsHistoryCall(!isHistoryCall)
         const currCalls = await callService.getCalls()
+        setCalls(sortCalls(currCalls))
 
-        currCalls.sort((a, b) => {
+    }
+    const sortCalls = (currCalls) => {
+        const tempCalls = currCalls
+        tempCalls.sort((a, b) => {
             const currADate = new Date(a.date)
             const currBDate = new Date(b.date)
-            console.log('currADate',currADate,'currBDate',currBDate);
-            if (currADate > currBDate)return -1
+            if (currADate > currBDate) return -1
             else if (currADate < currBDate) return 1
         })
-        setCalls(currCalls)
+        return tempCalls
     }
+
     const OnHistoryCall = (phone) => {
         setToCall(phone)
     }
 
-    const handleChange = ({target}) => {
+    const handleChange = ({ target }) => {
         setToCall(target.value)
     }
+
     const addToHistory = async (phone) => {
 
         let regex2 = /^[0][5]\d{8}$/
         const phoneValidate = regex2.test(phone);
-        if(phoneValidate===false) return
-    
+        if (phoneValidate === false) return
         let dateNow = new Date();
-        const options = { year: 'numeric', month: 'numeric', day: 'numeric' };
+        const options = { year: 'numeric', month: 'numeric', day: 'numeric', hour: '2-digit', minute: '2-digit', second: '2-digit' };
         dateNow = dateNow.toLocaleDateString('de-DE', options)
-        let call = { phone, date: Date.now() }
-        const calls = await callService.setCalls(call)
-        setCalls(calls)
+        let call = { phone, date: dateNow }
+        const currCalls = await callService.setCalls(call)
+        console.log(currCalls);
+        setCalls(sortCalls(currCalls))
     }
 
     if (!calls) return <div>Loading...</div>
@@ -68,7 +63,7 @@ export const App = () => {
         <div>
             <AppHeader ToggleHistory={ToggleHistory} />
             <main>
-                
+
                 <div>
                     <label htmlFor='phone'>phone:</label>
                     <input
@@ -79,13 +74,13 @@ export const App = () => {
                         name='phone'
                         value={toCall}
                         onChange={handleChange}
-                        />
+                    />
                     <button onClick={() => { addToHistory(toCall) }}>Call</button>
                 </div>
-                        {isHistoryCall &&
-        
-                            <HistoryCalls calls={calls} OnHistoryCall={OnHistoryCall} />
-                        }
+                {isHistoryCall &&
+
+                    <HistoryCalls calls={calls} OnHistoryCall={OnHistoryCall} />
+                }
 
             </main>
         </div>
