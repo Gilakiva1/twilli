@@ -46,11 +46,15 @@ export const App = () => {
         setToCall(phone)
     }
 
-    const handleChange = () => {
-
+    const handleChange = ({target}) => {
+        setToCall(target.value)
     }
     const addToHistory = async (phone) => {
-        console.log('sadsaads');
+
+        let regex2 = /^[0][5]\d{8}$/
+        const phoneValidate = regex2.test(phone);
+        if(phoneValidate===false) return
+    
         let dateNow = new Date();
         const options = { year: 'numeric', month: 'numeric', day: 'numeric' };
         dateNow = dateNow.toLocaleDateString('de-DE', options)
