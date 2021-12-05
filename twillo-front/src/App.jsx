@@ -12,18 +12,27 @@ export const App = () => {
 
     const [isHistoryCall, setIsHistoryCall] = useState(false)
     const [toCall, setToCall] = useState('')
-    const [calls, setCalls] = useState()
+    const [calls, setCalls] = useState(null)
 
     useEffect(async () => {
-        console.log('dasdadsd');
         if (!calls) {
-
             const currCalls = await callService.getCalls()
+
+            currCalls.sort((a, b) => {
+                const currADate = new Date(a.date)
+                const currBDate = new Date(b.date)
+                console.log('currADate',currADate,'currBDate',currBDate);
+                if (currADate > currBDate)return -1
+                else if (currADate < currBDate) return 1
+            })
             setCalls(currCalls)
         }
 
     }, [])
-
+    const ToggleHistory = () => {
+        setIsHistoryCall(!isHistoryCall)
+        console.log(isHistoryCall);
+    }
     const OnHistoryCall = (phone) => {
         setToCall(phone)
 
@@ -33,27 +42,25 @@ export const App = () => {
 
     }
     const addToHistory = async (phone) => {
-        if (!phone) return
+        console.log('sadsaads');
         let dateNow = new Date();
         const options = { year: 'numeric', month: 'numeric', day: 'numeric' };
         dateNow = dateNow.toLocaleDateString('de-DE', options)
-        let call = { phone, date: dateNow }
-        console.log(call);
+        let call = { phone, date: Date.now() }
         const calls = await callService.setCalls(call)
-
         setCalls(calls)
-
-
     }
 
     if (!calls) return <div>Loading...</div>
     return (
         <div>
-            <AppHeader />
+            <AppHeader ToggleHistory={ToggleHistory} />
             <main>
-                <HistoryCalls calls={calls} OnHistoryCall={OnHistoryCall} />
-                <div>
+                {isHistoryCall &&
 
+                    <HistoryCalls calls={calls} OnHistoryCall={OnHistoryCall} />
+                }
+                <div>
                     <label htmlFor='phone'>phone</label>
                     <input
                         id='phone'

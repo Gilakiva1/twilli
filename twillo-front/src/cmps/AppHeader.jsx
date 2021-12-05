@@ -1,13 +1,13 @@
 
 
-export const AppHeader = ({ OnHistoryCall }) => {
+export const AppHeader = ({ ToggleHistory }) => {
 
     return (
 
         <header>
             <span>Twillio</span>
             <div>
-                <button onClick={OnHistoryCall}>History Calls</button>
+                <button onClick={ToggleHistory}>History Calls</button>
             </div>
         </header>
     )

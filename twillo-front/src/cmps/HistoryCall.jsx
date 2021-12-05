@@ -1,11 +1,19 @@
+import { useEffect, useState } from "react";
+
 export const HistoryCalls = ({ calls, OnHistoryCall }) => {
 
-    console.log('calls',calls);
-
+    const [lastCalls, setCalls] = useState()
+    useEffect(() => {
+        if (calls) {
+            const currCalls = calls.splice(0, 5)
+            setCalls(currCalls)
+        }
+    }, [])
+    if(!lastCalls) return <div>loading</div>
     return (
         <section className="call-list">
             {
-                calls.map((call, idx) => (
+                lastCalls.map((call, idx) => (
                     <div key={idx} className="call-history">
                         <span>{call.phone}</span>
                         <span>{call.date}</span>
